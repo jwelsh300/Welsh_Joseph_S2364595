@@ -25,6 +25,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.welsh_joseph_s2364595.model.Situation;
+import com.example.welsh_joseph_s2364595.parser.SituationParser;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -35,7 +38,9 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
@@ -43,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private Button startButton;
 
     //DOWNLOADING FROM TRAFFIC SCOTLAND
-    final String clientId = "YOUR_ID_HERE";
-    final String clientKey = "YOUR_KEY_HERE";
+    final String clientId = BuildConfig.TS_CLIENT_ID;
+    final String clientKey = BuildConfig.TS_CLIENT_KEY;
     final String unplannedEventsURL = "https://datex2.trafficscotland.org/rest/2.3/publications/UnplannedEvents/Content.xml";
 
     @Override
@@ -118,20 +123,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             result = result.substring(i);
 
             // Now that you have the xml data into result, you can parse it
-            try {
-                XmlPullParserFactory factory =
-                        XmlPullParserFactory.newInstance();
-                factory.setNamespaceAware(true);
-                XmlPullParser xpp = factory.newPullParser();
-                xpp.setInput( new StringReader( result ) );
-
-                //YOUR PARSING HERE!!!
-
-
-            } catch (XmlPullParserException e) {
-                Log.e("Parsing","EXCEPTION" + e);
-                //throw new RuntimeException(e);
-            }
+            SituationParser parser = new SituationParser();
+            ArrayList<Situation> situations = parser.parse(result, "Incident");
+            Log.d("MainActivity", "Parsed " + situations.size() + " situations");
 
             // Now update the TextView to display raw XML data
             // Probably not the best way to update TextView

@@ -1,5 +1,13 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
+}
+
+val localProps = Properties()
+val localPropsFile = rootProject.file("local.properties")
+if (localPropsFile.exists()) {
+    localPropsFile.inputStream().use { localProps.load(it) }
 }
 
 android {
@@ -16,6 +24,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "TS_CLIENT_ID",
+            "\"${localProps.getProperty("TS_CLIENT_ID", "")}\"")
+        buildConfigField("String", "TS_CLIENT_KEY",
+            "\"${localProps.getProperty("TS_CLIENT_KEY", "")}\"")
+
     }
 
     buildTypes {
@@ -29,6 +43,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
