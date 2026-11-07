@@ -19,6 +19,7 @@ public class SituationParser {
     public ArrayList<Situation> parse(String xml, String category) {
         ArrayList<Situation> situations = new ArrayList<>();
         Situation current = null;
+        boolean insideComment = false;
 
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -38,14 +39,38 @@ public class SituationParser {
                         current.setId(xpp.getAttributeValue(null, "id"));
                         current.setRecordType(xpp.getAttributeValue(XSI_NS, "type"));
                     }
+                    else if (current != null && tag.equals("overallStartTime")) {
+                        current.setStartTime(xpp.nextText());
+                    }
+                    else if (current != null && tag.equals("overallEndTime")) {
+                        current.setEndTime(xpp.nextText());
+                    }
+                    else if (current != null && tag.equals("tpegDirection")) {
+                        current.setDirection(xpp.nextText());
+                    }
+                    else if (current != null && tag.equals("urgentRoadworks")) {
+                        current.setUrgent(Boolean.parseBoolean(xpp.nextText()));
+                    }
+                    else if (current != null && ( tag.equals("abnormalTrafficType")  ||  tag.equals("accidentType")  ||  tag.equals("roadOrCarriagewayOrLaneManagementType")  ||  tag.equals("roadMaintenanceType"))) {
+                        current.setTypeDetail(xpp.nextText());
+                    }
+                    else if (current != null && ( tag.equals("generalPublicComment"))) {
+                        insideComment = true;
+                    }
+                    else if (current != null && insideComment && tag.equals("value")) {
+                        current.setComment(xpp.nextText());
+                    }
 
                 } else if (eventType == XmlPullParser.END_TAG) {
                     String tag = xpp.getName();
 
                     if (tag.equals("situationRecord") && current != null) {
                         situations.add(current);
-                        Log.d("SituationParser", "Added: " + current.getId());
+                        Log.d("SituationParser", "Added: " + current.toString());
                         current = null;
+                    }
+                    if ( tag.equals("generalPublicComment")) {
+                        insideComment = false;
                     }
                 }
 
