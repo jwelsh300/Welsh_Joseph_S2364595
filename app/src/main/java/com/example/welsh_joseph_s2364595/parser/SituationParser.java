@@ -20,6 +20,8 @@ public class SituationParser {
         ArrayList<Situation> situations = new ArrayList<>();
         Situation current = null;
         boolean insideComment = false;
+        boolean insideFrom = false;
+        boolean insideTo = false;
 
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -60,6 +62,32 @@ public class SituationParser {
                     else if (current != null && insideComment && tag.equals("value")) {
                         current.setComment(xpp.nextText());
                     }
+                    else if (current != null && tag.equals("from")) {
+                        insideFrom = true;
+                    }
+                    else if (current != null && tag.equals("to")) {
+                        insideTo = true;
+                    }
+                    else if (current != null && tag.equals("latitude")) {
+                        double lat = Double.parseDouble(xpp.nextText());
+
+                        if (insideFrom) {
+                            current.getFrom().setLatitude(lat);
+                        }
+                        else if (insideTo) {
+                            current.getTo().setLatitude(lat);
+                        }
+                    }
+                    else if (current != null && tag.equals("longitude")) {
+                        double lon = Double.parseDouble(xpp.nextText());
+
+                        if (insideFrom) {
+                            current.getFrom().setLongitude(lon);
+                        }
+                        else if (insideTo) {
+                            current.getTo().setLongitude(lon);
+                        }
+                    }
 
                 } else if (eventType == XmlPullParser.END_TAG) {
                     String tag = xpp.getName();
@@ -71,6 +99,12 @@ public class SituationParser {
                     }
                     if ( tag.equals("generalPublicComment")) {
                         insideComment = false;
+                    }
+                    if ( tag.equals("from")) {
+                        insideFrom = false;
+                    }
+                    if ( tag.equals("to")) {
+                        insideTo = false;
                     }
                 }
 
