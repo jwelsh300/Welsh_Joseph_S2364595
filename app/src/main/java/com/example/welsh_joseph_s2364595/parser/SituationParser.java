@@ -2,6 +2,7 @@ package com.example.welsh_joseph_s2364595.parser;
 
 import android.util.Log;
 
+import com.example.welsh_joseph_s2364595.model.LocationPoint;
 import com.example.welsh_joseph_s2364595.model.Situation;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -22,6 +23,7 @@ public class SituationParser {
         boolean insideComment = false;
         boolean insideFrom = false;
         boolean insideTo = false;
+        String lastValue = "";
 
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -87,6 +89,39 @@ public class SituationParser {
                         else if (insideTo) {
                             current.getTo().setLongitude(lon);
                         }
+                    }
+                    else if (current != null && (insideFrom || insideTo) && tag.equals("value")) {
+                        lastValue = xpp.nextText();
+                    }
+                    else if (current != null && (insideFrom || insideTo)
+                            && (tag.equals("tpegIlcPointDescriptorType")
+                            || tag.equals("tpegJunctionPointDescriptorType")
+                            || tag.equals("tpegOtherPointDescriptorType"))) {
+
+                        String label = xpp.nextText();
+
+                        LocationPoint point;
+                        if (insideFrom) {
+                            point = current.getFrom();
+                        }
+                        else {
+                            point = current.getTo();
+                        }
+
+                        if (label.equals("tpegIlcName1") || label.equals("linkName")) {
+                            point.setRoadName(lastValue);
+                        }
+                        else if (label.equals("tpegIlcName2")) {
+                            point.setSecondRoadName(lastValue);
+                        }
+                        else if (label.equals("junctionName")) {
+                            point.setJunctionName(lastValue);
+                        }
+                        else if (label.equals("intersectionName") || label.equals("nonLinkedPointName")) {
+                            point.setPlaceName(lastValue);
+                        }
+
+                        lastValue = "";
                     }
 
                 } else if (eventType == XmlPullParser.END_TAG) {
