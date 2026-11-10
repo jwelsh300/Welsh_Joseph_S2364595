@@ -40,8 +40,18 @@ public class SituationParser {
                     if (tag.equals("situationRecord")) {
                         current = new Situation();
                         current.setCategory(category);
-                        current.setId(xpp.getAttributeValue(null, "id"));
-                        current.setRecordType(xpp.getAttributeValue(XSI_NS, "type"));
+
+                        String id = xpp.getAttributeValue(null, "id");
+                        if (id == null) {
+                            id = "";
+                        }
+                        current.setId(id);
+
+                        String recordType = xpp.getAttributeValue(XSI_NS, "type");
+                        if (recordType == null) {
+                            recordType = "";
+                        }
+                        current.setRecordType(recordType);
                     }
                     else if (current != null && tag.equals("overallStartTime")) {
                         current.setStartTime(xpp.nextText());
@@ -71,7 +81,7 @@ public class SituationParser {
                         insideTo = true;
                     }
                     else if (current != null && tag.equals("latitude")) {
-                        double lat = Double.parseDouble(xpp.nextText());
+                        double lat = toDouble(xpp.nextText());
 
                         if (insideFrom) {
                             current.getFrom().setLatitude(lat);
@@ -81,7 +91,7 @@ public class SituationParser {
                         }
                     }
                     else if (current != null && tag.equals("longitude")) {
-                        double lon = Double.parseDouble(xpp.nextText());
+                        double lon = toDouble(xpp.nextText());
 
                         if (insideFrom) {
                             current.getFrom().setLongitude(lon);
@@ -123,6 +133,15 @@ public class SituationParser {
 
                         lastValue = "";
                     }
+                    else if (current != null && tag.equals("delaysType")) {
+                        current.getImpact().setDelayType(xpp.nextText());
+                    }
+                    else if (current != null && tag.equals("numberOfLanesRestricted")) {
+                        current.getImpact().setLanesRestricted(toInt(xpp.nextText()));
+                    }
+                    else if (current != null && tag.equals("numberOfOperationalLanes")) {
+                        current.getImpact().setOperationalLanes(toInt(xpp.nextText()));
+                    }
 
                 } else if (eventType == XmlPullParser.END_TAG) {
                     String tag = xpp.getName();
@@ -152,5 +171,25 @@ public class SituationParser {
         }
 
         return situations;
+    }
+
+    // Returns 0.0 if the text isn't a number (hasCoordinates() treats 0.0 as "no location")
+    private double toDouble(String text) {
+        try {
+            return Double.parseDouble(text.trim());
+        } catch (NumberFormatException e) {
+            Log.w("SituationParser", "Bad number '" + text + "', using 0.0");
+            return 0.0;
+        }
+    }
+
+    // Returns -1 if the text isn't a whole number (-1 means "not given")
+    private int toInt(String text) {
+        try {
+            return Integer.parseInt(text.trim());
+        } catch (NumberFormatException e) {
+            Log.w("SituationParser", "Bad number '" + text + "', using -1");
+            return -1;
+        }
     }
 }
