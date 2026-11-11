@@ -24,10 +24,11 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.welsh_joseph_s2364595.model.Situation;
+import com.example.welsh_joseph_s2364595.view.SituationListFragment;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
-    private TextView rawDataDisplay;
+    private TextView summaryText;
     private Button startButton;
     private SituationViewModel viewModel;
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             return insets;
         });
         // Set up the raw links to the graphical components
-        rawDataDisplay = (TextView)findViewById(R.id.rawDataDisplay);
+        summaryText = (TextView)findViewById(R.id.summaryText);
         startButton = (Button)findViewById(R.id.startButton);
         startButton.setOnClickListener(this);
 
@@ -60,10 +61,17 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 }
             }
             int roadworks = list.size() - incidents;
-            rawDataDisplay.setText("Incidents: " + incidents
+            summaryText.setText("Incidents: " + incidents
                     + ", Roadworks: " + roadworks
                     + ", Total: " + list.size());
         });
+        // Put the list Fragment in the placeholder, only on first launch
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.listHolder, new SituationListFragment())
+                    .commit();
+        }
     }
 
     public void onClick(View aview)
