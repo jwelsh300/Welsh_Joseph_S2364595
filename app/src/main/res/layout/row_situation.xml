@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:padding="12dp"
     android:background="?attr/selectableItemBackground">
-
     <TextView
         android:id="@+id/rowTitle"
         android:layout_width="match_parent"
@@ -14,7 +13,6 @@
         android:textSize="16sp"
         android:textStyle="bold"
         tools:text="Incident · M8" />
-
     <TextView
         android:id="@+id/rowComment"
         android:layout_width="match_parent"
@@ -24,5 +22,4 @@
         android:maxLines="2"
         android:ellipsize="end"
         tools:text="The M74 Northbound is currently restricted between junctions 7 and 6 due to a road traffic incident. Road users should expect delays." />
-
 </LinearLayout>

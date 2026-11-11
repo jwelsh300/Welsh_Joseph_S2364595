@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <TextView
         android:id="@+id/salutation"
         android:layout_width="match_parent"
@@ -13,7 +12,6 @@
         android:textSize="20sp"
         android:text="Welcome to Mobile Platform Development"
         />
-
     <TextView
         android:id="@+id/summaryText"
         android:layout_width="match_parent"
@@ -21,14 +19,12 @@
         android:textSize="16sp"
         android:text="Loading…"
         />
-
     <Button
         android:id="@+id/startButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Refresh"
         />
-
     <TextView
         android:id="@+id/acknowledgement"
         android:layout_width="match_parent"
@@ -36,12 +32,10 @@
         android:textSize="12sp"
         android:text="Contains Traffic Scotland data"
         />
-
     <FrameLayout
         android:id="@+id/listHolder"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         />
-
 </LinearLayout>
