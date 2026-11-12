@@ -16,9 +16,15 @@ import java.util.List;
 
 public class SituationAdapter extends RecyclerView.Adapter<SituationAdapter.ViewHolder> {
 
-    private List<Situation> situations;
+    public interface OnSituationClickListener {
+        void onSituationClick(Situation s);
+    }
 
-    public SituationAdapter() {
+    private List<Situation> situations;
+    private final OnSituationClickListener listener;
+
+    public SituationAdapter(OnSituationClickListener listener) {
+        this.listener = listener;
         situations = new ArrayList<>();
     }
 
@@ -46,6 +52,8 @@ public class SituationAdapter extends RecyclerView.Adapter<SituationAdapter.View
 
         holder.rowTitle.setText(title);
         holder.rowComment.setText(s.getComment());
+
+        holder.itemView.setOnClickListener(v -> listener.onSituationClick(s));
     }
 
     @Override

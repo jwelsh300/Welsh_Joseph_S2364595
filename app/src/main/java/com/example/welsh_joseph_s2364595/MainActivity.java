@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,8 +27,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.welsh_joseph_s2364595.model.Situation;
 import com.example.welsh_joseph_s2364595.view.SituationListFragment;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
+import com.example.welsh_joseph_s2364595.view.SituationDetailFragment;
 
-public class MainActivity extends AppCompatActivity implements OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnClickListener, SituationListFragment.SituationListListener {
     private TextView summaryText;
     private Button startButton;
     private SituationViewModel viewModel;
@@ -37,19 +39,19 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // Set up the raw links to the graphical components
+
         summaryText = (TextView)findViewById(R.id.summaryText);
         startButton = (Button)findViewById(R.id.startButton);
         startButton.setOnClickListener(this);
 
         viewModel = new ViewModelProvider(this).get(SituationViewModel.class);
 
-        // Draw whatever list arrives (always runs on the main thread)
         viewModel.getSituations().observe(this, list -> {
             if (list == null) {
                 return;
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     + ", Roadworks: " + roadworks
                     + ", Total: " + list.size());
         });
-        // Put the list Fragment in the placeholder, only on first launch
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -77,5 +79,19 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     public void onClick(View aview)
     {
         viewModel.refresh();
+    }
+
+    @Override
+    public void onSituationSelected() {
+        Situation s = viewModel.getSelected().getValue();
+        if (s != null) {
+            Log.d("MainActivity", "Selected: " + s.getId() + " · " + s.getRoadName());
+        }
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.listHolder, new SituationDetailFragment())
+                .addToBackStack(null)
+                .commit();
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,10 +18,31 @@ import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
 
 public class SituationListFragment extends Fragment {
 
+    public interface SituationListListener {
+        void onSituationSelected();
+    }
+
     private SituationAdapter adapter;
     private SituationViewModel viewModel;
+    private SituationListListener listener;
 
     public SituationListFragment() {}
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof SituationListListener) {
+            listener = (SituationListListener) context;
+        } else {
+            throw new RuntimeException(context + " must implement SituationListListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -33,7 +55,11 @@ public class SituationListFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recycler.setLayoutManager(llm);
 
-        adapter = new SituationAdapter();
+        adapter = new SituationAdapter(s -> {
+            viewModel.select(s);
+            listener.onSituationSelected();
+        });
+
         recycler.setAdapter(adapter);
 
         return v;

@@ -16,6 +16,7 @@ public class SituationViewModel extends ViewModel {
     private final SituationRepository repository = new SituationRepository();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final MutableLiveData<List<Situation>> situations = new MutableLiveData<>();
+    private final MutableLiveData<Situation> selected = new MutableLiveData<>();
     private volatile boolean busy = false;
 
     public SituationViewModel() {
@@ -24,6 +25,14 @@ public class SituationViewModel extends ViewModel {
 
     public LiveData<List<Situation>> getSituations() {
         return situations;
+    }
+
+    public LiveData<Situation> getSelected() {
+        return selected;
+    }
+
+    public void select(Situation s) {
+        selected.setValue(s);
     }
 
     public void refresh() {
