@@ -75,7 +75,6 @@ public class SituationRepository {
                     Base64.getEncoder().encodeToString((clientId + ":" + clientKey).getBytes()));
             urlConnection.setConnectTimeout(CONNECT_TIMEOUT_MS);
             urlConnection.setReadTimeout(READ_TIMEOUT_MS);
-                    Base64.getEncoder().encodeToString((clientId + ":" + clientKey).getBytes());
             try {
                 in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 while ((inputLine = in.readLine()) != null) {
