@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Welsh_Joseph_S2364595</string>
+    <string name="summary_loading">Loading…</string>
+    <string name="acknowledgement">Contains Traffic Scotland data</string>
+    <string name="title_main">Traffic Scotland</string>
+    <string name="action_refresh">Refresh</string>
 </resources>

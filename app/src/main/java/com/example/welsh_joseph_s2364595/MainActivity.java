@@ -11,27 +11,29 @@
 package com.example.welsh_joseph_s2364595;
 
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
 import android.util.Log;
+import android.widget.TextView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.appcompat.app.ActionBar;
 
 import com.example.welsh_joseph_s2364595.model.Situation;
+import com.example.welsh_joseph_s2364595.view.SituationDetailFragment;
 import com.example.welsh_joseph_s2364595.view.SituationListFragment;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
-import com.example.welsh_joseph_s2364595.view.SituationDetailFragment;
 
-public class MainActivity extends AppCompatActivity implements OnClickListener, SituationListFragment.SituationListListener {
+public class MainActivity extends AppCompatActivity
+        implements SituationListFragment.SituationListListener {
+
     private TextView summaryText;
-    private Button startButton;
     private SituationViewModel viewModel;
 
     @Override
@@ -40,15 +42,17 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle(R.string.title_main);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        summaryText = (TextView)findViewById(R.id.summaryText);
-        startButton = (Button)findViewById(R.id.startButton);
-        startButton.setOnClickListener(this);
+        summaryText = findViewById(R.id.summaryText);
 
         viewModel = new ViewModelProvider(this).get(SituationViewModel.class);
 
@@ -74,11 +78,38 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                     .replace(R.id.listHolder, new SituationListFragment())
                     .commit();
         }
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this::updateUpArrow);
+        updateUpArrow();
     }
 
-    public void onClick(View aview)
-    {
-        viewModel.refresh();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_refresh) {
+            viewModel.refresh();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getSupportFragmentManager().popBackStack();
+        return true;
+    }
+
+    private void updateUpArrow() {
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setDisplayHomeAsUpEnabled(
+                    getSupportFragmentManager().getBackStackEntryCount() > 0);
+        }
     }
 
     @Override
