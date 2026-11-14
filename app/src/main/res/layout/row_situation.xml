@@ -3,23 +3,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp"
+    android:orientation="horizontal"
     android:background="?attr/selectableItemBackground">
-    <TextView
-        android:id="@+id/rowTitle"
-        android:layout_width="match_parent"
+
+    <View
+        android:id="@+id/rowDelayBar"
+        android:layout_width="6dp"
+        android:layout_height="match_parent"
+        tools:background="#FFA000" />
+
+    <ImageView
+        android:id="@+id/rowIcon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="12dp"
+        tools:src="@android:drawable/ic_dialog_info"
+        tools:contentDescription="Roadworks" />
+
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:text="Incident · M8" />
-    <TextView
-        android:id="@+id/rowComment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textSize="14sp"
-        android:maxLines="2"
-        android:ellipsize="end"
-        tools:text="The M74 Northbound is currently restricted between junctions 7 and 6 due to a road traffic incident. Road users should expect delays." />
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="12dp">
+        <TextView
+            android:id="@+id/rowTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Roadwork · M8" />
+        <TextView
+            android:id="@+id/rowComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            tools:text="M8 WB Woodside - A804 Phoenix Rd - Closure. Lane restrictions in place with long delays expected at peak times." />
+    </LinearLayout>
 </LinearLayout>

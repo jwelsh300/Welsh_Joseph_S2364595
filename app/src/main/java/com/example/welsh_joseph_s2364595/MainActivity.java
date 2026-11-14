@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
@@ -93,6 +94,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh) {
             viewModel.refresh();
+            return true;
+        }
+        if (item.getItemId() == R.id.action_key) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.key_title)
+                    .setView(R.layout.dialog_key)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
             return true;
         }
         return super.onOptionsItemSelected(item);

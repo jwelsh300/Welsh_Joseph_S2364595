@@ -15,6 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.welsh_joseph_s2364595.R;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
+import com.example.welsh_joseph_s2364595.model.Situation;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class SituationListFragment extends Fragment {
 
@@ -26,7 +31,8 @@ public class SituationListFragment extends Fragment {
     private SituationViewModel viewModel;
     private SituationListListener listener;
 
-    public SituationListFragment() {}
+    public SituationListFragment() {
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -75,7 +81,12 @@ public class SituationListFragment extends Fragment {
             if (list == null) {
                 return;
             }
-            adapter.setSituations(list);
+            // Sort a copy, never the ViewModel's own list
+            List<Situation> sorted = new ArrayList<>(list);
+            Comparator<Situation> bySeverity = Comparator.comparingInt(SituationStyle::rankFor);
+            sorted.sort(bySeverity.thenComparing(Situation::getRoadName));
+
+            adapter.setSituations(sorted);
         });
     }
 }

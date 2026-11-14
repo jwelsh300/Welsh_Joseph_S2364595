@@ -4,4 +4,20 @@
     <string name="acknowledgement">Contains Traffic Scotland data</string>
     <string name="title_main">Traffic Scotland</string>
     <string name="action_refresh">Refresh</string>
+    <string name="type_road_closed">Road closed</string>
+    <string name="type_accident">Accident</string>
+    <string name="type_abnormal_traffic">Abnormal traffic</string>
+    <string name="type_obstruction">Obstruction</string>
+    <string name="type_lanes_restricted">Lanes restricted</string>
+    <string name="type_roadworks">Roadworks</string>
+    <string name="type_other">Other</string>
+    <string name="action_key">Key</string>
+    <string name="key_title">Key</string>
+    <string name="key_icons_heading">Icons (type)</string>
+    <string name="key_colours_heading">Colour bar (roadworks delays)</string>
+    <string name="key_colour_very_long">Very long delays</string>
+    <string name="key_colour_long">Long delays</string>
+    <string name="key_colour_short">Delays</string>
+    <string name="key_colour_none">No delays expected</string>
+    <string name="key_colour_note">Incidents have no colour bar. Delay levels are also written on each detail screen.</string>
 </resources>

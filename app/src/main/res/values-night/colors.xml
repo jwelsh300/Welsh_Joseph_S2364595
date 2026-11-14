@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="delay_na">#81C784</color>
+    <color name="delay_short">#FFD54F</color>
+    <color name="delay_long">#FFB74D</color>
+    <color name="delay_vlong">#E57373</color>
+</resources>
