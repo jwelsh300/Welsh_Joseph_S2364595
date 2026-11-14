@@ -9,11 +9,6 @@ import androidx.annotation.StringRes;
 import com.example.welsh_joseph_s2364595.R;
 import com.example.welsh_joseph_s2364595.model.Situation;
 
-/**
- * The single place that decides how a Situation looks: its icon, label,
- * delay colour and severity rank. The list, the detail screen, the Key
- * dialog and the map all use this class, so they can never disagree.
- */
 public final class SituationStyle {
 
     private static final String TAG = "SituationStyle";

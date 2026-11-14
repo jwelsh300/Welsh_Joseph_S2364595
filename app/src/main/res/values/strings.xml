@@ -20,4 +20,6 @@
     <string name="key_colour_short">Delays</string>
     <string name="key_colour_none">No delays expected</string>
     <string name="key_colour_note">Incidents have no colour bar. Delay levels are also written on each detail screen.</string>
+    <string name="action_search">Search roads</string>
+    <string name="search_hint">Road, e.g. M8 or A720</string>
 </resources>

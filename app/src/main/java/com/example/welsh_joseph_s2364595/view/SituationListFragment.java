@@ -77,11 +77,10 @@ public class SituationListFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(SituationViewModel.class);
 
-        viewModel.getSituations().observe(getViewLifecycleOwner(), list -> {
+        viewModel.getFiltered().observe(getViewLifecycleOwner(), list -> {
             if (list == null) {
                 return;
             }
-            // Sort a copy, never the ViewModel's own list
             List<Situation> sorted = new ArrayList<>(list);
             Comparator<Situation> bySeverity = Comparator.comparingInt(SituationStyle::rankFor);
             sorted.sort(bySeverity.thenComparing(Situation::getRoadName));
