@@ -33,6 +33,8 @@ import com.example.welsh_joseph_s2364595.view.SituationDetailFragment;
 import com.example.welsh_joseph_s2364595.view.SituationListFragment;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
         implements SituationListFragment.SituationListListener {
 
@@ -59,20 +61,31 @@ public class MainActivity extends AppCompatActivity
 
         viewModel = new ViewModelProvider(this).get(SituationViewModel.class);
 
-        viewModel.getSituations().observe(this, list -> {
-            if (list == null) {
+        viewModel.getFiltered().observe(this, filteredList -> {
+            if (filteredList == null) {
                 return;
             }
-            int incidents = 0;
-            for (Situation s : list) {
-                if (s.getCategory().equals("Incident")) {
-                    incidents++;
-                }
+            List<Situation> all = viewModel.getSituations().getValue();
+            if (all == null) {
+                return;
             }
-            int roadworks = list.size() - incidents;
-            summaryText.setText("Incidents: " + incidents
-                    + ", Roadworks: " + roadworks
-                    + ", Total: " + list.size());
+
+            String q = viewModel.getQuery().getValue();
+            q = (q == null) ? "" : q.trim();
+
+            if (q.isEmpty()) {
+                int incidents = 0;
+                for (Situation s : all) {
+                    if (s.getCategory().equals("Incident")) {
+                        incidents++;
+                    }
+                }
+                int roadworks = all.size() - incidents;
+                summaryText.setText(getString(R.string.summary_all, incidents, roadworks, all.size()));
+            } else {
+                summaryText.setText(getString(R.string.summary_filtered,
+                        filteredList.size(), all.size(), q));
+            }
         });
 
         if (savedInstanceState == null) {
@@ -96,6 +109,14 @@ public class MainActivity extends AppCompatActivity
         searchView.setQueryHint(getString(R.string.search_hint));
         searchView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
 
+        String saved = viewModel.getQuery().getValue();
+        saved = (saved == null) ? "" : saved.trim();
+        if (!saved.isEmpty()) {
+            searchItem.expandActionView();
+            searchView.setQuery(saved, false);
+            searchView.clearFocus();
+        }
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String text) {
@@ -106,6 +127,9 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextChange(String text) {
+                if (!text.isEmpty() && isDetailShowing()) {
+                    getSupportFragmentManager().popBackStack();
+                }
                 viewModel.setQuery(text);
                 return true;
             }
@@ -114,17 +138,24 @@ public class MainActivity extends AppCompatActivity
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                if (isDetailShowing()) {
+                    getSupportFragmentManager().popBackStack();
+                }
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                Log.d("MainActivity", "Search collapsed → clearing query");
                 viewModel.setQuery("");
                 return true;
             }
         });
-
         return true;
+    }
+
+    private boolean isDetailShowing() {
+        return getSupportFragmentManager().getBackStackEntryCount() > 0;
     }
 
     @Override

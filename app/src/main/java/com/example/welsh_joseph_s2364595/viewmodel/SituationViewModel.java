@@ -31,6 +31,10 @@ public class SituationViewModel extends ViewModel {
         refresh();
     }
 
+    public LiveData<String> getQuery() {
+        return query;
+    }
+
     public LiveData<List<Situation>> getSituations() {
         return situations;
     }

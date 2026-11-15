@@ -1,10 +1,11 @@
 package com.example.welsh_joseph_s2364595.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.content.Context;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,12 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.welsh_joseph_s2364595.R;
-import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
 import com.example.welsh_joseph_s2364595.model.Situation;
+import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
 
 public class SituationListFragment extends Fragment {
 
@@ -30,9 +32,11 @@ public class SituationListFragment extends Fragment {
     private SituationAdapter adapter;
     private SituationViewModel viewModel;
     private SituationListListener listener;
+    private RecyclerView recycler;
+    private TextView emptyText;
+    private String lastQuery = null;
 
-    public SituationListFragment() {
-    }
+    public SituationListFragment() {}
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -55,7 +59,8 @@ public class SituationListFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_situation_list, container, false);
 
-        RecyclerView recycler = v.findViewById(R.id.situationRecycler);
+        recycler = v.findViewById(R.id.situationRecycler);
+        emptyText = v.findViewById(R.id.emptyText);
 
         LinearLayoutManager llm = new LinearLayoutManager(requireContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -86,6 +91,31 @@ public class SituationListFragment extends Fragment {
             sorted.sort(bySeverity.thenComparing(Situation::getRoadName));
 
             adapter.setSituations(sorted);
+
+            String query = currentQuery();
+            showEmptyState(sorted.isEmpty(), query);
+
+            if (lastQuery != null && !lastQuery.equals(query)) {
+                recycler.scrollToPosition(0);
+            }
+            lastQuery = query;
         });
+    }
+
+    private void showEmptyState(boolean empty, String query) {
+        if (!empty) {
+            emptyText.setVisibility(View.GONE);
+        } else if (!query.isEmpty()) {
+            emptyText.setText(getString(R.string.empty_no_results, query));
+            emptyText.setVisibility(View.VISIBLE);
+        } else {
+            emptyText.setText(R.string.empty_no_data);
+            emptyText.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private String currentQuery() {
+        String q = viewModel.getQuery().getValue();
+        return q == null ? "" : q.trim();
     }
 }
