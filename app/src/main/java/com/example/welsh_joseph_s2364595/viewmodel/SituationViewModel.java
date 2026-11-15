@@ -20,6 +20,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SituationViewModel extends ViewModel {
 
+    public enum LoadStatus { // for partial load/failure output
+        OK,
+        FAILED_NO_DATA,
+        FAILED_OLD_DATA,
+        PARTIAL_INCIDENTS_FAILED,
+        PARTIAL_ROADWORKS_FAILED
+    }
+
     private static final long AUTO_REFRESH_MINUTES = 60;
 
     private final SituationRepository repository = new SituationRepository();
@@ -32,6 +40,9 @@ public class SituationViewModel extends ViewModel {
     private final MutableLiveData<Situation> selected = new MutableLiveData<>();
     private final MutableLiveData<String> query = new MutableLiveData<>("");
     private final MediatorLiveData<List<Situation>> filtered = new MediatorLiveData<>();
+    private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
+    private final MutableLiveData<Long> lastUpdated = new MutableLiveData<>();
+    private final MutableLiveData<LoadStatus> status = new MutableLiveData<>();
 
     private final AtomicBoolean busy = new AtomicBoolean(false);
 
@@ -58,6 +69,22 @@ public class SituationViewModel extends ViewModel {
         return filtered;
     }
 
+    public LiveData<Boolean> getLoading() {
+        return loading;
+    }
+
+    public LiveData<Long> getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public LiveData<LoadStatus> getStatus() {
+        return status;
+    }
+
+    public void statusShown() {
+        status.setValue(null);   // main thread only
+    }
+
     public void select(Situation s) {
         selected.setValue(s);
     }
@@ -72,13 +99,43 @@ public class SituationViewModel extends ViewModel {
         }
 
         executor.execute(() -> {
+            loading.postValue(true);
             try {
-                List<Situation> result = repository.fetchAll();
-                if (result != null) {
-                    situations.postValue(result);
+                SituationRepository.FetchResult r = repository.fetchAll();
+                List<Situation> previous = situations.getValue();
+
+                if (r == null || r.incidents == null && r.roadworks == null) {
+                    status.postValue(previous == null
+                            ? LoadStatus.FAILED_NO_DATA
+                            : LoadStatus.FAILED_OLD_DATA);
+                    return;
+                }
+
+                // halves
+                List<Situation> incidents = (r.incidents != null)
+                        ? r.incidents
+                        : oldOfCategory(previous, "Incident");
+                List<Situation> roadworks = (r.roadworks != null)
+                        ? r.roadworks
+                        : oldOfCategory(previous, "Roadwork");
+
+                List<Situation> merged = new ArrayList<>(incidents.size() + roadworks.size());
+                merged.addAll(incidents);
+                merged.addAll(roadworks);
+
+                lastUpdated.postValue(System.currentTimeMillis());
+                situations.postValue(merged);
+
+                if (r.incidents == null) {
+                    status.postValue(LoadStatus.PARTIAL_INCIDENTS_FAILED);
+                } else if (r.roadworks == null) {
+                    status.postValue(LoadStatus.PARTIAL_ROADWORKS_FAILED);
+                } else {
+                    status.postValue(LoadStatus.OK);
                 }
             } finally {
                 busy.set(false);
+                loading.postValue(false);
             }
         });
     }
@@ -134,5 +191,19 @@ public class SituationViewModel extends ViewModel {
         }
         return !Character.isDigit(r.charAt(q.length()));
     }
+
+    private static List<Situation> oldOfCategory(List<Situation> previous, String category) {
+        List<Situation> result = new ArrayList<>();
+        if (previous == null) {
+            return result;
+        }
+        for (Situation s : previous) {
+            if (category.equals(s.getCategory())) {
+                result.add(s);
+            }
+        }
+        return result;
+    }
+
 
 }

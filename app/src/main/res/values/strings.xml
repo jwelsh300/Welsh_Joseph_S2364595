@@ -26,4 +26,11 @@
     <string name="summary_filtered">Showing %1$d of %2$d for %3$s</string>
     <string name="empty_no_results">No situations found for %1$s</string>
     <string name="empty_no_data">No situations to show</string>
+    <string name="summary_updated">Updated %1$s</string>
+    <string name="msg_no_data">Can’t load traffic data. Check your connection.</string>
+    <string name="msg_old_data">Couldn’t update. Showing data from %1$s</string>
+    <string name="msg_incidents_failed">Incidents couldn’t be updated</string>
+    <string name="msg_roadworks_failed">Roadworks couldn’t be updated</string>
+    <string name="action_retry">Retry</string>
+    <string name="summary_no_data">No data loaded</string>
 </resources>

@@ -17,6 +17,16 @@ import java.util.List;
 
 public class SituationRepository {
 
+    public static class FetchResult {
+        public final List<Situation> incidents;
+        public final List<Situation> roadworks;
+
+        FetchResult(List<Situation> incidents, List<Situation> roadworks) {
+            this.incidents = incidents;
+            this.roadworks = roadworks;
+        }
+    }
+
     private static final String TAG = "SituationRepository";
     private static final int CONNECT_TIMEOUT_MS = 10000;
     private static final int READ_TIMEOUT_MS = 15000;
@@ -27,40 +37,29 @@ public class SituationRepository {
     private final String clientId = BuildConfig.TS_CLIENT_ID;
     private final String clientKey = BuildConfig.TS_CLIENT_KEY;
 
-    public List<Situation> fetchAll() {
-        String unplannedXml = downloadXml(unplannedEventsURL);
-        String roadworksXml = downloadXml(roadworksURL);
-
-        if (unplannedXml.isEmpty() && roadworksXml.isEmpty()) {
-            Log.e(TAG, "Both downloads failed");
-            return null;
-        }
-
+    public FetchResult fetchAll() {
         SituationParser parser = new SituationParser();
 
-        ArrayList<Situation> incidents = new ArrayList<>();
+        List<Situation> incidents = null;
+        String unplannedXml = downloadXml(unplannedEventsURL);
         if (!unplannedXml.isEmpty()) {
             incidents = parser.parse(unplannedXml, "Incident");
         } else {
             Log.e(TAG, "Unplanned events download failed");
         }
 
-        ArrayList<Situation> roadworks = new ArrayList<>();
+        List<Situation> roadworks = null;
+        String roadworksXml = downloadXml(roadworksURL);
         if (!roadworksXml.isEmpty()) {
             roadworks = parser.parse(roadworksXml, "Roadwork");
         } else {
             Log.e(TAG, "Roadworks download failed");
         }
 
-        List<Situation> allSituations = new ArrayList<>();
-        allSituations.addAll(incidents);
-        allSituations.addAll(roadworks);
+        Log.d(TAG, "Incidents: " + (incidents == null ? "FAILED" : incidents.size())
+                + ", Roadworks: " + (roadworks == null ? "FAILED" : roadworks.size()));
 
-        Log.d(TAG, "Incidents: " + incidents.size()
-                + ", Roadworks: " + roadworks.size()
-                + ", Total: " + allSituations.size());
-
-        return allSituations;
+        return new FetchResult(incidents, roadworks);
     }
 
     private String downloadXml(String address) {

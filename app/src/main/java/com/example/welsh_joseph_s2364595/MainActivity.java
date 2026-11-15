@@ -16,6 +16,9 @@ import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.text.InputType;
+import android.text.format.DateFormat;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -32,14 +35,19 @@ import com.example.welsh_joseph_s2364595.model.Situation;
 import com.example.welsh_joseph_s2364595.view.SituationDetailFragment;
 import com.example.welsh_joseph_s2364595.view.SituationListFragment;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
+import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel.LoadStatus;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements SituationListFragment.SituationListListener {
 
     private TextView summaryText;
     private SituationViewModel viewModel;
+    private ProgressBar loadingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         setTitle(R.string.title_main);
 
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -58,35 +67,17 @@ public class MainActivity extends AppCompatActivity
         });
 
         summaryText = findViewById(R.id.summaryText);
+        loadingBar = findViewById(R.id.loadingBar);
 
         viewModel = new ViewModelProvider(this).get(SituationViewModel.class);
 
-        viewModel.getFiltered().observe(this, filteredList -> {
-            if (filteredList == null) {
-                return;
-            }
-            List<Situation> all = viewModel.getSituations().getValue();
-            if (all == null) {
-                return;
-            }
+        viewModel.getFiltered().observe(this, list -> updateSummary());
+        viewModel.getLastUpdated().observe(this, time -> updateSummary());
 
-            String q = viewModel.getQuery().getValue();
-            q = (q == null) ? "" : q.trim();
+        viewModel.getLoading().observe(this, isLoading ->
+                loadingBar.setVisibility(Boolean.TRUE.equals(isLoading) ? View.VISIBLE : View.GONE));
 
-            if (q.isEmpty()) {
-                int incidents = 0;
-                for (Situation s : all) {
-                    if (s.getCategory().equals("Incident")) {
-                        incidents++;
-                    }
-                }
-                int roadworks = all.size() - incidents;
-                summaryText.setText(getString(R.string.summary_all, incidents, roadworks, all.size()));
-            } else {
-                summaryText.setText(getString(R.string.summary_filtered,
-                        filteredList.size(), all.size(), q));
-            }
-        });
+        viewModel.getStatus().observe(this, this::showStatus);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
@@ -146,7 +137,6 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                Log.d("MainActivity", "Search collapsed → clearing query");
                 viewModel.setQuery("");
                 return true;
             }
@@ -187,6 +177,81 @@ public class MainActivity extends AppCompatActivity
             bar.setDisplayHomeAsUpEnabled(
                     getSupportFragmentManager().getBackStackEntryCount() > 0);
         }
+    }
+
+    private void updateSummary() {
+        List<Situation> filteredList = viewModel.getFiltered().getValue();
+        List<Situation> all = viewModel.getSituations().getValue();
+        if (filteredList == null || all == null) {
+            return;   // nothing downloaded yet
+        }
+
+        String q = viewModel.getQuery().getValue();
+        q = (q == null) ? "" : q.trim();
+
+        String text;
+        if (q.isEmpty()) {
+            int incidents = 0;
+            for (Situation s : all) {
+                if (s.getCategory().equals("Incident")) {
+                    incidents++;
+                }
+            }
+            int roadworks = all.size() - incidents;
+            text = getString(R.string.summary_all, incidents, roadworks, all.size());
+        } else {
+            text = getString(R.string.summary_filtered, filteredList.size(), all.size(), q);
+        }
+
+        Long time = viewModel.getLastUpdated().getValue();
+        if (time != null) {
+            text = text + " · " + getString(R.string.summary_updated, formatTime(time));
+        }
+
+        summaryText.setText(text);
+    }
+
+    private void showStatus(LoadStatus status) {
+        if (status == null || status == LoadStatus.OK) {
+            return;
+        }
+
+        String text;
+        int duration;
+        switch (status) {
+            case FAILED_NO_DATA:
+                text = getString(R.string.msg_no_data);
+                duration = Snackbar.LENGTH_INDEFINITE;
+                summaryText.setText(R.string.summary_no_data);
+                break;
+            case FAILED_OLD_DATA:
+                Long time = viewModel.getLastUpdated().getValue();
+                text = getString(R.string.msg_old_data, time == null ? "?" : formatTime(time));
+                duration = Snackbar.LENGTH_LONG;
+                break;
+            case PARTIAL_INCIDENTS_FAILED:
+                text = getString(R.string.msg_incidents_failed);
+                duration = Snackbar.LENGTH_LONG;
+                break;
+            case PARTIAL_ROADWORKS_FAILED:
+                text = getString(R.string.msg_roadworks_failed);
+                duration = Snackbar.LENGTH_LONG;
+                break;
+            default:
+                return;
+        }
+
+        Snackbar.make(findViewById(R.id.main), text, duration)
+                .setAction(R.string.action_retry, v -> viewModel.refresh())
+                .show();
+
+        if (status != LoadStatus.FAILED_NO_DATA) {
+            viewModel.statusShown();
+        }
+    }
+
+    private String formatTime(long millis) {
+        return DateFormat.getTimeFormat(this).format(new Date(millis));
     }
 
     @Override
