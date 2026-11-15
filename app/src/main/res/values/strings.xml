@@ -38,4 +38,20 @@
     <string name="summary_interval">every %1$d min</string>
 
     <string name="detail_placeholder">Select a situation to see details</string>
+
+    <string name="detail_heading_location">Location</string>
+    <string name="detail_heading_timing">Timing</string>
+    <string name="detail_heading_impact">Impact</string>
+
+    <string name="detail_label_direction">Direction</string>
+    <string name="detail_label_from">From</string>
+    <string name="detail_label_to">To</string>
+    <string name="detail_label_start">Start</string>
+    <string name="detail_label_end">End</string>
+    <string name="detail_label_lanes">Lanes</string>
+    <string name="detail_label_delays">Delays</string>
+    <string name="detail_label_urgent">Urgent</string>
+
+    <string name="detail_label_location">Location</string>
+    <string name="detail_urgent_yes">Yes</string>
 </resources>

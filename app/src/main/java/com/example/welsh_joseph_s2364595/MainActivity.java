@@ -113,6 +113,9 @@ public class MainActivity extends AppCompatActivity
 
         getSupportFragmentManager().addOnBackStackChangedListener(this::onBackStackChanged);
         updateUpArrow();
+        getSupportFragmentManager().addOnBackStackChangedListener(this::onBackStackChanged);
+        updateUpArrow();
+        updateSummaryVisibility();
     }
 
     @Override
@@ -209,6 +212,7 @@ public class MainActivity extends AppCompatActivity
     // to prevent bug with rotating twice turning on list into on detail
     private void onBackStackChanged() {
         updateUpArrow();
+        updateSummaryVisibility();
 
         if (!isTwoPane() && getSupportFragmentManager().getBackStackEntryCount() == 0) {
             viewModel.select(null);
@@ -247,6 +251,14 @@ public class MainActivity extends AppCompatActivity
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(
                     getSupportFragmentManager().getBackStackEntryCount() > 0);
+        }
+    }
+
+    // to hide portrait list summary when detail screen is open
+    private void updateSummaryVisibility() {
+        if (summaryText != null) {
+            summaryText.setVisibility(
+                    getSupportFragmentManager().getBackStackEntryCount() > 0 ? View.GONE : View.VISIBLE);
         }
     }
 

@@ -7,237 +7,261 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <!-- ===== Heading ===== -->
-        <TextView
-            android:id="@+id/detailCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="Incident" />
-        <TextView
-            android:id="@+id/detailType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            tools:text="Queuing traffic" />
+            <View
+                android:id="@+id/detailSeverity"
+                android:layout_width="6dp"
+                android:layout_height="match_parent"
+                tools:background="#FFA000" />
 
-        <!-- ===== Location ===== -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorPrimary"
-            android:text="Location" />
-        <LinearLayout
-            android:id="@+id/rowRoad"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
-                android:text="Road" />
-            <TextView
-                android:id="@+id/detailRoad"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                tools:text="M8" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/rowDirection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
-                android:text="Direction" />
-            <TextView
-                android:id="@+id/detailDirection"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="Eastbound" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/rowFrom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
-                android:text="From" />
-            <TextView
-                android:id="@+id/detailFrom"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="M8 J19 Kingston Bridge (East)\nJunction J19" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/rowTo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
-                android:text="To" />
-            <TextView
-                android:id="@+id/detailTo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="M8 J18 Charing Cross\nJunction J18" />
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/detailCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    tools:text="Roadwork" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/detailIcon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        tools:src="@android:drawable/ic_dialog_info"
+                        tools:contentDescription="Roadworks" />
+
+                    <TextView
+                        android:id="@+id/detailType"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        tools:text="Roadworks · M90" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- ===== Timing ===== -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorPrimary"
-            android:text="Timing" />
         <LinearLayout
-            android:id="@+id/rowStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="16dp">
             <TextView
-                android:layout_width="100dp"
+                android:id="@+id/detailComment"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
-                android:text="Start" />
-            <TextView
-                android:id="@+id/detailStart"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="2026-11-06T10:12:32+00:00" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/rowEnd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
-                android:text="End" />
-            <TextView
-                android:id="@+id/detailEnd"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="2027-12-31T23:59:00+00:00" />
-        </LinearLayout>
+                android:textSize="16sp"
+                tools:text="M90/A90 - NB - Full Route - Hard shoulder short stops" />
 
-        <!-- ===== Impact ===== -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorPrimary"
-            android:text="Impact" />
-        <LinearLayout
-            android:id="@+id/rowLanes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
+            <!-- ===== Location  ===== -->
             <TextView
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
-                android:text="Lanes" />
-            <TextView
-                android:id="@+id/detailLanes"
-                android:layout_width="0dp"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:text="@string/detail_heading_location" />
+            <LinearLayout
+                android:id="@+id/rowDirection"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="2 lanes restricted" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/rowDelay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="100dp"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:text="@string/detail_label_direction" />
+                <TextView
+                    android:id="@+id/detailDirection"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="Northbound" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/rowFrom"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
-                android:text="Delays" />
-            <TextView
-                android:id="@+id/detailDelay"
-                android:layout_width="0dp"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/labelFrom"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:text="@string/detail_label_from" />
+                <TextView
+                    android:id="@+id/detailFrom"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="M90 (Slip Off to Rhs Crash Barrier)" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/rowTo"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="Long delays" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/rowUrgent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
-                android:text="Urgent" />
-            <TextView
-                android:id="@+id/detailUrgent"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="No" />
-        </LinearLayout>
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:text="@string/detail_label_to" />
+                <TextView
+                    android:id="@+id/detailTo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="M90 (Dalbeath O'Br to M90 S/B Off Slip To A92)" />
+            </LinearLayout>
 
-        <!-- ===== Comment ===== -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorPrimary"
-            android:text="Details" />
-        <TextView
-            android:id="@+id/detailComment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            tools:text="The A6091 is closed Eastbound at Galafoot Bridge to allow for essential roadworks. Diversions are in place." />
+            <!-- ===== Timing ===== -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:text="@string/detail_heading_timing" />
+            <LinearLayout
+                android:id="@+id/rowStart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:text="@string/detail_label_start" />
+                <TextView
+                    android:id="@+id/detailStart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="2024-04-01T00:01:00+01:00" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/rowEnd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:text="@string/detail_label_end" />
+                <TextView
+                    android:id="@+id/detailEnd"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="2028-03-31T23:59:00+01:00" />
+            </LinearLayout>
 
-        <!-- ===== Reference ===== -->
-        <TextView
-            android:id="@+id/detailId"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="12sp"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="Ref: I_20261106_185" />
+            <!-- ===== Impact ===== -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:text="@string/detail_heading_impact" />
+
+            <LinearLayout
+                android:id="@+id/rowLanes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:text="@string/detail_label_lanes" />
+                <TextView
+                    android:id="@+id/detailLanes"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="2 lanes restricted" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rowDelay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:text="@string/detail_label_delays" />
+                <TextView
+                    android:id="@+id/detailDelay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="Long delays" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rowUrgent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:text="@string/detail_label_urgent" />
+                <TextView
+                    android:id="@+id/detailUrgent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="Yes" />
+            </LinearLayout>
+            <FrameLayout
+                android:id="@+id/detailMapHolder"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone" />
+            <TextView
+                android:id="@+id/detailId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="Ref: D_182962" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
