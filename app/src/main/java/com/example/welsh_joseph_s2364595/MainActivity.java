@@ -49,6 +49,10 @@ public class MainActivity extends AppCompatActivity
     private SituationViewModel viewModel;
     private ProgressBar loadingBar;
 
+    private static final String PREFS_NAME = "settings";
+    private static final String KEY_REFRESH_MINUTES = "refresh_minutes";
+    private static final int DEFAULT_REFRESH_MINUTES = 60;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +74,8 @@ public class MainActivity extends AppCompatActivity
         loadingBar = findViewById(R.id.loadingBar);
 
         viewModel = new ViewModelProvider(this).get(SituationViewModel.class);
+
+        viewModel.setAutoRefreshMinutes(loadRefreshMinutes());
 
         viewModel.getFiltered().observe(this, list -> updateSummary());
         viewModel.getLastUpdated().observe(this, time -> updateSummary());
@@ -162,6 +168,10 @@ public class MainActivity extends AppCompatActivity
                     .show();
             return true;
         }
+        if (item.getItemId() == R.id.action_interval) {
+            showIntervalDialog();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -205,7 +215,8 @@ public class MainActivity extends AppCompatActivity
 
         Long time = viewModel.getLastUpdated().getValue();
         if (time != null) {
-            text = text + " · " + getString(R.string.summary_updated, formatTime(time));
+            text = text + " · " + getString(R.string.summary_updated, formatTime(time))
+                    + " · " + getString(R.string.summary_interval, viewModel.getAutoRefreshMinutes());
         }
 
         summaryText.setText(text);
@@ -252,6 +263,45 @@ public class MainActivity extends AppCompatActivity
 
     private String formatTime(long millis) {
         return DateFormat.getTimeFormat(this).format(new Date(millis));
+    }
+
+    private void showIntervalDialog() {
+        String[] labels = getResources().getStringArray(R.array.interval_labels);
+        int[] minutes = getResources().getIntArray(R.array.interval_minutes);
+
+        // Tick the option matching the current setting (-1 = none, if it somehow isn't listed)
+        int saved = loadRefreshMinutes();
+        int checked = -1;
+        for (int i = 0; i < minutes.length; i++) {
+            if (minutes[i] == saved) {
+                checked = i;
+                break;
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.interval_title)
+                .setSingleChoiceItems(labels, checked, (dialog, which) -> {
+                    int chosen = minutes[which];
+                    saveRefreshMinutes(chosen);
+                    viewModel.setAutoRefreshMinutes(chosen);
+                    updateSummary();            // show the new interval straight away
+                    dialog.dismiss();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private int loadRefreshMinutes() {
+        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                .getInt(KEY_REFRESH_MINUTES, DEFAULT_REFRESH_MINUTES);
+    }
+
+    private void saveRefreshMinutes(int minutes) {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                .edit()
+                .putInt(KEY_REFRESH_MINUTES, minutes)
+                .apply();   // saves in the background; commit() would block the main thread
     }
 
     @Override

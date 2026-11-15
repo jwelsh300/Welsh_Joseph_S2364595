@@ -17,4 +17,8 @@
         android:title="@string/action_key"
         android:icon="@drawable/ic_help"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_interval"
+        android:title="@string/action_interval"
+        app:showAsAction="never" />
 </menu>

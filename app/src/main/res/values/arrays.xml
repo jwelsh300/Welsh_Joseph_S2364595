@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="interval_labels">
+        <item>Every minute (demo)</item>
+        <item>Every 15 minutes</item>
+        <item>Every 30 minutes</item>
+        <item>Every hour (default)</item>
+    </string-array>
+
+    <integer-array name="interval_minutes">
+        <item>1</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+    </integer-array>
+</resources>

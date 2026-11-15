@@ -35,6 +35,7 @@ public class SituationViewModel extends ViewModel {
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     private ScheduledFuture<?> autoRefresh;
+    private long currentMinutes = 0;
 
     private final MutableLiveData<List<Situation>> situations = new MutableLiveData<>();
     private final MutableLiveData<Situation> selected = new MutableLiveData<>();
@@ -146,6 +147,18 @@ public class SituationViewModel extends ViewModel {
         }
         autoRefresh = executor.scheduleWithFixedDelay(
                 this::refresh, minutes, minutes, TimeUnit.MINUTES);
+        currentMinutes = minutes;
+    }
+
+    public void setAutoRefreshMinutes(long minutes) {
+        if (minutes == currentMinutes) {
+            return;   // e.g. every rotation: keep the running timer and its countdown
+        }
+        startAutoRefresh(minutes);
+    }
+
+    public long getAutoRefreshMinutes() {
+        return currentMinutes;
     }
 
     @Override

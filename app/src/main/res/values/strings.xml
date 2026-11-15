@@ -33,4 +33,7 @@
     <string name="msg_roadworks_failed">Roadworks couldn’t be updated</string>
     <string name="action_retry">Retry</string>
     <string name="summary_no_data">No data loaded</string>
+    <string name="action_interval">Auto-refresh interval</string>
+    <string name="interval_title">Refresh automatically</string>
+    <string name="summary_interval">every %1$d min</string>
 </resources>
