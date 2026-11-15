@@ -148,7 +148,6 @@ public class SituationParser {
 
                     if (tag.equals("situationRecord") && current != null) {
                         situations.add(current);
-                        Log.d("SituationParser", "Added: " + current.toString());
                         current = null;
                     }
                     if ( tag.equals("generalPublicComment")) {

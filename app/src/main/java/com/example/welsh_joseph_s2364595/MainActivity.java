@@ -74,9 +74,6 @@ public class MainActivity extends AppCompatActivity
             return insets;
         });
 
-        summaryText = findViewById(R.id.summaryText);
-        loadingBar = findViewById(R.id.loadingBar);
-
         summaryText = findViewById(R.id.summaryText);             // portrait only (null in landscape)
         loadingBar = findViewById(R.id.loadingBar);
         detailPlaceholder = findViewById(R.id.detailPlaceholder); // landscape only (null in portrait)
@@ -111,8 +108,6 @@ public class MainActivity extends AppCompatActivity
             arrangeFragmentsAfterRotation();
         }
 
-        getSupportFragmentManager().addOnBackStackChangedListener(this::onBackStackChanged);
-        updateUpArrow();
         getSupportFragmentManager().addOnBackStackChangedListener(this::onBackStackChanged);
         updateUpArrow();
         updateSummaryVisibility();
