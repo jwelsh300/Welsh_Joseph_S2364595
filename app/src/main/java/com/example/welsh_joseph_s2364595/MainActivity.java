@@ -30,6 +30,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.welsh_joseph_s2364595.model.Situation;
 import com.example.welsh_joseph_s2364595.view.SituationDetailFragment;
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity
     private static final String KEY_REFRESH_MINUTES = "refresh_minutes";
     private static final int DEFAULT_REFRESH_MINUTES = 60;
 
+    private View detailPlaceholder;   // landscape only
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +77,13 @@ public class MainActivity extends AppCompatActivity
         summaryText = findViewById(R.id.summaryText);
         loadingBar = findViewById(R.id.loadingBar);
 
+        summaryText = findViewById(R.id.summaryText);             // portrait only (null in landscape)
+        loadingBar = findViewById(R.id.loadingBar);
+        detailPlaceholder = findViewById(R.id.detailPlaceholder); // landscape only (null in portrait)
+
+        // Landscape has no summary TextView: put the starting text in the subtitle instead
+        showSummary(getString(R.string.summary_loading));
+
         viewModel = new ViewModelProvider(this).get(SituationViewModel.class);
 
         viewModel.setAutoRefreshMinutes(loadRefreshMinutes());
@@ -85,14 +96,22 @@ public class MainActivity extends AppCompatActivity
 
         viewModel.getStatus().observe(this, this::showStatus);
 
+        viewModel.getSelected().observe(this, s -> {
+            if (detailPlaceholder != null) {
+                detailPlaceholder.setVisibility(s != null ? View.GONE : View.VISIBLE);
+            }
+        });
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.listHolder, new SituationListFragment())
                     .commit();
+        } else {
+            arrangeFragmentsAfterRotation();
         }
 
-        getSupportFragmentManager().addOnBackStackChangedListener(this::updateUpArrow);
+        getSupportFragmentManager().addOnBackStackChangedListener(this::onBackStackChanged);
         updateUpArrow();
     }
 
@@ -152,6 +171,48 @@ public class MainActivity extends AppCompatActivity
 
     private boolean isDetailShowing() {
         return getSupportFragmentManager().getBackStackEntryCount() > 0;
+    }
+
+    // two pane for landscape
+    private boolean isTwoPane() {
+        return findViewById(R.id.detailHolder) != null;
+    }
+
+    private void arrangeFragmentsAfterRotation() {
+        FragmentManager fm = getSupportFragmentManager();
+        boolean somethingSelected = viewModel.getSelected().getValue() != null;
+
+        if (isTwoPane()) {
+            if (fm.getBackStackEntryCount() > 0) {
+                fm.popBackStackImmediate();
+            }
+            if (somethingSelected && fm.findFragmentById(R.id.detailHolder) == null) {
+                fm.beginTransaction()
+                        .replace(R.id.detailHolder, new SituationDetailFragment())
+                        .commit();
+            }
+        } else {
+            Fragment orphan = fm.findFragmentById(R.id.detailHolder);
+            if (orphan != null) {
+                fm.beginTransaction().remove(orphan).commitNow();
+
+                if (somethingSelected) {
+                    fm.beginTransaction()
+                            .replace(R.id.listHolder, new SituationDetailFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            }
+        }
+    }
+
+    // to prevent bug with rotating twice turning on list into on detail
+    private void onBackStackChanged() {
+        updateUpArrow();
+
+        if (!isTwoPane() && getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            viewModel.select(null);
+        }
     }
 
     @Override
@@ -219,7 +280,18 @@ public class MainActivity extends AppCompatActivity
                     + " · " + getString(R.string.summary_interval, viewModel.getAutoRefreshMinutes());
         }
 
-        summaryText.setText(text);
+        showSummary(text);
+    }
+
+    private void showSummary(CharSequence text) {
+        if (summaryText != null) {
+            summaryText.setText(text);
+        } else {
+            ActionBar bar = getSupportActionBar();
+            if (bar != null) {
+                bar.setSubtitle(text);
+            }
+        }
     }
 
     private void showStatus(LoadStatus status) {
@@ -233,7 +305,7 @@ public class MainActivity extends AppCompatActivity
             case FAILED_NO_DATA:
                 text = getString(R.string.msg_no_data);
                 duration = Snackbar.LENGTH_INDEFINITE;
-                summaryText.setText(R.string.summary_no_data);
+                showSummary(getString(R.string.summary_no_data));
                 break;
             case FAILED_OLD_DATA:
                 Long time = viewModel.getLastUpdated().getValue();
@@ -311,10 +383,19 @@ public class MainActivity extends AppCompatActivity
             Log.d("MainActivity", "Selected: " + s.getId() + " · " + s.getRoadName());
         }
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.listHolder, new SituationDetailFragment())
-                .addToBackStack(null)
-                .commit();
+        if (isTwoPane()) {
+            if (getSupportFragmentManager().findFragmentById(R.id.detailHolder) == null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.detailHolder, new SituationDetailFragment())
+                        .commit();
+            }
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.listHolder, new SituationDetailFragment())
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

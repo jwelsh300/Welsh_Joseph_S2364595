@@ -36,4 +36,6 @@
     <string name="action_interval">Auto-refresh interval</string>
     <string name="interval_title">Refresh automatically</string>
     <string name="summary_interval">every %1$d min</string>
+
+    <string name="detail_placeholder">Select a situation to see details</string>
 </resources>
