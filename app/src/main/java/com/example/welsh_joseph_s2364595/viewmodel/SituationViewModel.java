@@ -10,25 +10,36 @@ import com.example.welsh_joseph_s2364595.model.Situation;
 import com.example.welsh_joseph_s2364595.model.LocationPoint;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SituationViewModel extends ViewModel {
 
+    private static final long AUTO_REFRESH_MINUTES = 60;
+
     private final SituationRepository repository = new SituationRepository();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+    private ScheduledFuture<?> autoRefresh;
+
     private final MutableLiveData<List<Situation>> situations = new MutableLiveData<>();
     private final MutableLiveData<Situation> selected = new MutableLiveData<>();
     private final MutableLiveData<String> query = new MutableLiveData<>("");
     private final MediatorLiveData<List<Situation>> filtered = new MediatorLiveData<>();
-    private volatile boolean busy = false;
+
+    private final AtomicBoolean busy = new AtomicBoolean(false);
 
     public SituationViewModel() {
         filtered.addSource(situations, list -> applyFilter());
         filtered.addSource(query, text -> applyFilter());
         refresh();
+        startAutoRefresh(AUTO_REFRESH_MINUTES);
     }
 
     public LiveData<String> getQuery() {
@@ -56,10 +67,9 @@ public class SituationViewModel extends ViewModel {
     }
 
     public void refresh() {
-        if (busy) {
+        if (!busy.compareAndSet(false, true)) {
             return;
         }
-        busy = true;
 
         executor.execute(() -> {
             try {
@@ -67,11 +77,18 @@ public class SituationViewModel extends ViewModel {
                 if (result != null) {
                     situations.postValue(result);
                 }
-
             } finally {
-                busy = false;
+                busy.set(false);
             }
         });
+    }
+
+    private void startAutoRefresh(long minutes) {
+        if (autoRefresh != null) {
+            autoRefresh.cancel(false);   // false = don't interrupt a download in progress
+        }
+        autoRefresh = executor.scheduleWithFixedDelay(
+                this::refresh, minutes, minutes, TimeUnit.MINUTES);
     }
 
     @Override
