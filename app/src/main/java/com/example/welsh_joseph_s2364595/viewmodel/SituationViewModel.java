@@ -48,7 +48,7 @@ public class SituationViewModel extends ViewModel {
     private final MutableLiveData<LoadStatus> status = new MutableLiveData<>();
     private final MutableLiveData<NearbySetting> nearby = new MutableLiveData<>();
     private final AtomicBoolean busy = new AtomicBoolean(false);
-    private static final double meters_per_mile = 1609.344;
+    private static final double METERS_PER_MILE = 1609.344;
 
     public SituationViewModel() {
         filtered.addSource(situations, list -> applyFilter());
@@ -99,7 +99,7 @@ public class SituationViewModel extends ViewModel {
         query.setValue(text == null ? "" : text);
     }
 
-    public void setNearby(String placeName, double latitude, double longitude, double radiusMiles) {
+    public void setNearby(String placeName, double latitude, double longitude, int radiusMiles) {
         nearby.setValue(new NearbySetting(placeName, latitude, longitude, radiusMiles));
     }
 
@@ -111,9 +111,9 @@ public class SituationViewModel extends ViewModel {
         public final String placeName;
         public final double latitude;
         public final double longitude;
-        public final double radiusMiles;
+        public final int radiusMiles;
 
-        public NearbySetting(String placeName, double latitude, double longitude, double radiusMiles) {
+        public NearbySetting(String placeName, double latitude, double longitude, int radiusMiles) {
             this.placeName = placeName;
             this.latitude = latitude;
             this.longitude = longitude;
@@ -244,7 +244,7 @@ public class SituationViewModel extends ViewModel {
         float[] results = new float[1];
         Location.distanceBetween(near.latitude, near.longitude,
                 p.getLatitude(), p.getLongitude(), results);
-        return results[0] <= near.radiusMiles * meters_per_mile;   // results are metres, radius is km
+        return results[0] <= near.radiusMiles * METERS_PER_MILE;   // results are metres, radius is miles
     }
 
     private static List<Situation> oldOfCategory(List<Situation> previous, String category) {

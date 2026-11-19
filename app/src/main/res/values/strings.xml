@@ -23,8 +23,8 @@
     <string name="action_search">Search roads</string>
     <string name="search_hint">Road, e.g. M8 or A720</string>
     <string name="summary_all">Incidents: %1$d, Roadworks: %2$d, Total: %3$d</string>
-    <string name="summary_filtered">Showing %1$d of %2$d for %3$s</string>
-    <string name="empty_no_results">No situations found for %1$s</string>
+    <string name="summary_filtered">Showing %1$d of %2$d %3$s</string>
+    <string name="empty_no_results">No situations %1$s</string>
     <string name="empty_no_data">No situations to show</string>
     <string name="summary_updated">Updated %1$s</string>
     <string name="msg_no_data">Can’t load traffic data. Check your connection.</string>
@@ -57,6 +57,9 @@
 
     <string name="action_nearby">Nearby</string>
     <string name="nearby_place_title">Show situations near:</string>
-    <string name="nearby_radius_title">Distance from %1$s?</string>
+    <string name="nearby_radius_title">Distance from %1$s</string>
     <string name="nearby_turn_off">Turn off</string>
+
+    <string name="filter_road">for %1$s</string>
+    <string name="filter_nearby">within %1$d miles of %2$s</string>
 </resources>

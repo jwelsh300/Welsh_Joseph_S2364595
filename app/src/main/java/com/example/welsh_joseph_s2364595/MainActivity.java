@@ -39,6 +39,7 @@ import com.example.welsh_joseph_s2364595.view.SituationListFragment;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel.LoadStatus;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel.NearbySetting;
+import com.example.welsh_joseph_s2364595.view.FilterText;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity
     private static final String PREFS_NAME = "settings";
     private static final String KEY_REFRESH_MINUTES = "refresh_minutes";
     private static final int DEFAULT_REFRESH_MINUTES = 60;
-    private static final int DEFAULT_RADIUS_MILES = 25;
+    private static final int DEFAULT_RADIUS_MILES = 15;
 
     private View detailPlaceholder;   // landscape only
 
@@ -267,14 +268,14 @@ public class MainActivity extends AppCompatActivity
         List<Situation> filteredList = viewModel.getFiltered().getValue();
         List<Situation> all = viewModel.getSituations().getValue();
         if (filteredList == null || all == null) {
-            return;   // nothing downloaded yet
+            return;
         }
 
-        String q = viewModel.getQuery().getValue();
-        q = (q == null) ? "" : q.trim();
+        String filter = FilterText.describe(this,
+                viewModel.getQuery().getValue(), viewModel.getNearby().getValue());
 
         String text;
-        if (q.isEmpty()) {
+        if (filter.isEmpty()) {
             int incidents = 0;
             for (Situation s : all) {
                 if (s.getCategory().equals("Incident")) {
@@ -284,7 +285,7 @@ public class MainActivity extends AppCompatActivity
             int roadworks = all.size() - incidents;
             text = getString(R.string.summary_all, incidents, roadworks, all.size());
         } else {
-            text = getString(R.string.summary_filtered, filteredList.size(), all.size(), q);
+            text = getString(R.string.summary_filtered, filteredList.size(), all.size(), filter);
         }
 
         Long time = viewModel.getLastUpdated().getValue();
@@ -420,7 +421,7 @@ public class MainActivity extends AppCompatActivity
         double lon = Double.parseDouble(lons[placeIndex]);
 
         NearbySetting current = viewModel.getNearby().getValue();
-        double wanted = (current != null) ? current.radiusMiles : DEFAULT_RADIUS_MILES;
+        int wanted = (current != null) ? current.radiusMiles : DEFAULT_RADIUS_MILES;
         int checked = -1;
         for (int i = 0; i < radii.length; i++) {
             if (radii[i] == wanted) {

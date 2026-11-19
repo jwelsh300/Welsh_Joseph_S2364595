@@ -34,7 +34,7 @@ public class SituationListFragment extends Fragment {
     private SituationListListener listener;
     private RecyclerView recycler;
     private TextView emptyText;
-    private String lastQuery = null;
+    private String lastFilter = null;
 
     public SituationListFragment() {}
 
@@ -92,21 +92,21 @@ public class SituationListFragment extends Fragment {
 
             adapter.setSituations(sorted);
 
-            String query = currentQuery();
-            showEmptyState(sorted.isEmpty(), query);
-
-            if (lastQuery != null && !lastQuery.equals(query)) {
+            String filter = currentFilter();
+            showEmptyState(sorted.isEmpty(), filter);
+            
+            if (lastFilter != null && !lastFilter.equals(filter)) {
                 recycler.scrollToPosition(0);
             }
-            lastQuery = query;
+            lastFilter = filter;
         });
     }
 
-    private void showEmptyState(boolean empty, String query) {
+    private void showEmptyState(boolean empty, String filter) {
         if (!empty) {
             emptyText.setVisibility(View.GONE);
-        } else if (!query.isEmpty()) {
-            emptyText.setText(getString(R.string.empty_no_results, query));
+        } else if (!filter.isEmpty()) {
+            emptyText.setText(getString(R.string.empty_no_results, filter));
             emptyText.setVisibility(View.VISIBLE);
         } else {
             emptyText.setText(R.string.empty_no_data);
@@ -114,8 +114,8 @@ public class SituationListFragment extends Fragment {
         }
     }
 
-    private String currentQuery() {
-        String q = viewModel.getQuery().getValue();
-        return q == null ? "" : q.trim();
+    private String currentFilter() {
+        return FilterText.describe(requireContext(),
+                viewModel.getQuery().getValue(), viewModel.getNearby().getValue());
     }
 }

@@ -24,7 +24,7 @@
         <item>Stirling</item>
     </string-array>
 
-    <string-array name="place_lats">
+    <string-array name="place_lats" translatable="false">
         <item>57.1497</item> <!-- Aberdeen -->
         <item>56.4620</item> <!-- Dundee -->
         <item>55.9533</item> <!-- Edinburgh -->
@@ -51,7 +51,7 @@
         <item>60 miles</item>
     </string-array>
 
-    <integer-array name="radius_miles" translatable="false">
+    <integer-array name="radius_miles">
         <item>5</item>
         <item>15</item>
         <item>30</item>
