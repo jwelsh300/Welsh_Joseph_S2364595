@@ -56,7 +56,7 @@
     <string name="detail_urgent_yes">Yes</string>
 
     <string name="action_nearby">Nearby</string>
-    <string name="nearby_place_title">Show situations near…</string>
+    <string name="nearby_place_title">Show situations near:</string>
     <string name="nearby_radius_title">Distance from %1$s?</string>
     <string name="nearby_turn_off">Turn off</string>
 </resources>
