@@ -29,7 +29,10 @@ android {
             "\"${localProps.getProperty("TS_CLIENT_ID", "")}\"")
         buildConfigField("String", "TS_CLIENT_KEY",
             "\"${localProps.getProperty("TS_CLIENT_KEY", "")}\"")
+        buildConfigField("String", "TS_CLIENT_KEY",
+            "\"${localProps.getProperty("TS_CLIENT_KEY", "")}\"")
 
+        manifestPlaceholders["MAPS_API_KEY"] = localProps.getProperty("MAPS_API_KEY", "")
     }
 
     buildTypes {
@@ -55,6 +58,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
