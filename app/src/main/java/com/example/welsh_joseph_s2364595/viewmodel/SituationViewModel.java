@@ -1,5 +1,7 @@
 package com.example.welsh_joseph_s2364595.viewmodel;
 
+import android.location.Location;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -44,16 +46,19 @@ public class SituationViewModel extends ViewModel {
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
     private final MutableLiveData<Long> lastUpdated = new MutableLiveData<>();
     private final MutableLiveData<LoadStatus> status = new MutableLiveData<>();
-
+    private final MutableLiveData<NearbySetting> nearby = new MutableLiveData<>();
     private final AtomicBoolean busy = new AtomicBoolean(false);
+    private static final double meters_per_mile = 1609.344;
 
     public SituationViewModel() {
         filtered.addSource(situations, list -> applyFilter());
         filtered.addSource(query, text -> applyFilter());
+        filtered.addSource(nearby, setting -> applyFilter());
         refresh();
         startAutoRefresh(AUTO_REFRESH_MINUTES);
     }
 
+    public LiveData<NearbySetting> getNearby() { return nearby; }
     public LiveData<String> getQuery() {
         return query;
     }
@@ -92,6 +97,28 @@ public class SituationViewModel extends ViewModel {
 
     public void setQuery(String text) {
         query.setValue(text == null ? "" : text);
+    }
+
+    public void setNearby(String placeName, double latitude, double longitude, double radiusMiles) {
+        nearby.setValue(new NearbySetting(placeName, latitude, longitude, radiusMiles));
+    }
+
+    public void clearNearby() {
+        nearby.setValue(null);
+    }
+
+    public static final class NearbySetting {
+        public final String placeName;
+        public final double latitude;
+        public final double longitude;
+        public final double radiusMiles;
+
+        public NearbySetting(String placeName, double latitude, double longitude, double radiusMiles) {
+            this.placeName = placeName;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.radiusMiles = radiusMiles;
+        }
     }
 
     public void refresh() {
@@ -176,10 +203,11 @@ public class SituationViewModel extends ViewModel {
 
         String raw = query.getValue();
         String q = (raw == null ? "" : raw).trim().toUpperCase(Locale.ROOT);
+        NearbySetting near = nearby.getValue();
 
         List<Situation> result = new ArrayList<>();
         for (Situation s : list) {
-            if (q.isEmpty() || matchesSituation(s, q)) {
+            if ((q.isEmpty() || matchesSituation(s, q)) && (near == null || isNear(s, near))) {
                 result.add(s);
             }
         }
@@ -203,6 +231,20 @@ public class SituationViewModel extends ViewModel {
             return true;
         }
         return !Character.isDigit(r.charAt(q.length()));
+    }
+
+    private static boolean isNear(Situation s, NearbySetting near) {
+        return isPointNear(s.getFrom(), near) || isPointNear(s.getTo(), near);
+    }
+
+    private static boolean isPointNear(LocationPoint p, NearbySetting near) {
+        if (!p.hasCoordinates()) {
+            return false;   // 0.0/0.0 is "no location"
+        }
+        float[] results = new float[1];
+        Location.distanceBetween(near.latitude, near.longitude,
+                p.getLatitude(), p.getLongitude(), results);
+        return results[0] <= near.radiusMiles * meters_per_mile;   // results are metres, radius is km
     }
 
     private static List<Situation> oldOfCategory(List<Situation> previous, String category) {

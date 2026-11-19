@@ -21,4 +21,9 @@
         android:id="@+id/action_interval"
         android:title="@string/action_interval"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_nearby"
+        android:title="@string/action_nearby"
+        android:icon="@drawable/ic_near_me"
+        app:showAsAction="ifRoom" />
 </menu>

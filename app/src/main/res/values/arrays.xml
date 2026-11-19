@@ -13,4 +13,48 @@
         <item>30</item>
         <item>60</item>
     </integer-array>
+
+    <string-array name="place_names">
+        <item>Aberdeen</item>
+        <item>Dundee</item>
+        <item>Edinburgh</item>
+        <item>Glasgow</item>
+        <item>Inverness</item>
+        <item>Perth</item>
+        <item>Stirling</item>
+    </string-array>
+
+    <string-array name="place_lats">
+        <item>57.1497</item> <!-- Aberdeen -->
+        <item>56.4620</item> <!-- Dundee -->
+        <item>55.9533</item> <!-- Edinburgh -->
+        <item>55.8642</item> <!-- Glasgow -->
+        <item>57.4778</item> <!-- Inverness -->
+        <item>56.3950</item> <!-- Perth -->
+        <item>56.1165</item> <!-- Stirling -->
+    </string-array>
+
+    <string-array name="place_lons" translatable="false">
+        <item>-2.0943</item> <!-- Aberdeen -->
+        <item>-2.9707</item> <!-- Dundee -->
+        <item>-3.1883</item> <!-- Edinburgh -->
+        <item>-4.2518</item> <!-- Glasgow -->
+        <item>-4.2247</item> <!-- Inverness -->
+        <item>-3.4308</item> <!-- Perth -->
+        <item>-3.9369</item> <!-- Stirling -->
+    </string-array>
+
+    <string-array name="radius_labels">
+        <item>5 miles</item>
+        <item>15 miles</item>
+        <item>30 miles</item>
+        <item>60 miles</item>
+    </string-array>
+
+    <integer-array name="radius_miles" translatable="false">
+        <item>5</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+    </integer-array>
 </resources>

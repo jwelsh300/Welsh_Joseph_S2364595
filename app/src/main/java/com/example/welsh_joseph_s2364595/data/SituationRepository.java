@@ -81,13 +81,13 @@ public class SituationRepository {
                 }
                 in.close();
             } catch (IOException e) {
-                Log.e(TAG, "ioexception reading " + address);
+                Log.e(TAG, "ioexception reading " + address, e);
             }
             finally {
                 urlConnection.disconnect();
             }
         } catch (IOException e) {
-            Log.e(TAG, "ioexception opening " + address);
+            Log.e(TAG, "ioexception opening " + address, e);
         }
 
         String text = result.toString();

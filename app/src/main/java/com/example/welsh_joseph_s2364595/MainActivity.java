@@ -38,6 +38,7 @@ import com.example.welsh_joseph_s2364595.view.SituationDetailFragment;
 import com.example.welsh_joseph_s2364595.view.SituationListFragment;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel.LoadStatus;
+import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel.NearbySetting;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     private static final String PREFS_NAME = "settings";
     private static final String KEY_REFRESH_MINUTES = "refresh_minutes";
     private static final int DEFAULT_REFRESH_MINUTES = 60;
+    private static final int DEFAULT_RADIUS_MILES = 25;
 
     private View detailPlaceholder;   // landscape only
 
@@ -232,6 +234,10 @@ public class MainActivity extends AppCompatActivity
             showIntervalDialog();
             return true;
         }
+        if (item.getItemId() == R.id.action_nearby) {
+            showNearbyDialog();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -365,6 +371,71 @@ public class MainActivity extends AppCompatActivity
                     saveRefreshMinutes(chosen);
                     viewModel.setAutoRefreshMinutes(chosen);
                     updateSummary();            // show the new interval straight away
+                    dialog.dismiss();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void showNearbyDialog() {
+        String[] names = getResources().getStringArray(R.array.place_names);
+
+        // Tick the current place, if a filter is on (-1 = nothing ticked)
+        NearbySetting current = viewModel.getNearby().getValue();
+        int checked = -1;
+        if (current != null) {
+            for (int i = 0; i < names.length; i++) {
+                if (names[i].equals(current.placeName)) {
+                    checked = i;
+                    break;
+                }
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(R.string.nearby_place_title)
+                .setSingleChoiceItems(names, checked, (dialog, which) -> {
+                    dialog.dismiss();
+                    showRadiusDialog(which);
+                })
+                .setNegativeButton(android.R.string.cancel, null);
+
+        if (current != null) {
+            builder.setNeutralButton(R.string.nearby_turn_off,
+                    (dialog, which) -> viewModel.clearNearby());
+        }
+
+        builder.show();
+    }
+
+    private void showRadiusDialog(int placeIndex) {
+        String[] names = getResources().getStringArray(R.array.place_names);
+        String[] lats = getResources().getStringArray(R.array.place_lats);
+        String[] lons = getResources().getStringArray(R.array.place_lons);
+        String[] labels = getResources().getStringArray(R.array.radius_labels);
+        int[] radii = getResources().getIntArray(R.array.radius_miles);
+
+        String name = names[placeIndex];
+        double lat = Double.parseDouble(lats[placeIndex]);
+        double lon = Double.parseDouble(lons[placeIndex]);
+
+        NearbySetting current = viewModel.getNearby().getValue();
+        double wanted = (current != null) ? current.radiusMiles : DEFAULT_RADIUS_MILES;
+        int checked = -1;
+        for (int i = 0; i < radii.length; i++) {
+            if (radii[i] == wanted) {
+                checked = i;
+                break;
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.nearby_radius_title, name))
+                .setSingleChoiceItems(labels, checked, (dialog, which) -> {
+                    if (isDetailShowing()) {
+                        getSupportFragmentManager().popBackStack();
+                    }
+                    viewModel.setNearby(name, lat, lon, radii[which]);
                     dialog.dismiss();
                 })
                 .setNegativeButton(android.R.string.cancel, null)
