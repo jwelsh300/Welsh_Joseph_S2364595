@@ -19,7 +19,7 @@
     <string name="key_colour_long">Long delays</string>
     <string name="key_colour_short">Delays</string>
     <string name="key_colour_none">No delays expected</string>
-    <string name="key_colour_note">Incidents have no colour bar. Delay levels are also written on each detail screen.</string>
+    <string name="key_colour_note">Incidents have no colour bar in the list and are shown in purple on the map. Delay levels are also written on each detail screen.</string>
     <string name="action_search">Search roads</string>
     <string name="search_hint">Road, e.g. M8 or A720</string>
     <string name="summary_all">Incidents: %1$d, Roadworks: %2$d, Total: %3$d</string>

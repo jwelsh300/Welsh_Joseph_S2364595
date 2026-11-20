@@ -196,10 +196,12 @@ public class SituationMapFragment extends Fragment implements OnMapReadyCallback
             if (from.hasCoordinates() && to.hasCoordinates()
                     && (from.getLatitude() != to.getLatitude()
                     || from.getLongitude() != to.getLongitude())) {
+                int lineColour = ColorUtils.setAlphaComponent(
+                        ContextCompat.getColor(requireContext(), fillColourFor(s)), 180);
                 map.addPolyline(new PolylineOptions()
                         .add(toLatLng(from), toLatLng(to))
-                        .color(ContextCompat.getColor(requireContext(), fillColourFor(s)))
-                        .width(8f));
+                        .color(lineColour)
+                        .width(4 * getResources().getDisplayMetrics().density));
                 bounds.include(toLatLng(from));
                 bounds.include(toLatLng(to));
             }
@@ -253,7 +255,6 @@ public class SituationMapFragment extends Fragment implements OnMapReadyCallback
         return (colour == android.R.color.transparent) ? R.color.marker_incident : colour;
     }
 
-    // Same icon as the list, on a filled circle in the delay colour, cached per combination
     private BitmapDescriptor markerIconFor(Situation s) {
         int iconRes = SituationStyle.iconFor(s);
         int colourRes = fillColourFor(s);
@@ -266,13 +267,12 @@ public class SituationMapFragment extends Fragment implements OnMapReadyCallback
 
         Context context = requireContext();
         float density = getResources().getDisplayMetrics().density;
-        int size = Math.round(MARKER_SIZE_DP * density);   // dp → pixels for this screen
+        int size = Math.round(MARKER_SIZE_DP * density);
 
         Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         float centre = size / 2f;
 
-        // White ring first, then the coloured circle slightly smaller: visible on any map background
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
         canvas.drawCircle(centre, centre, centre, paint);
@@ -283,10 +283,10 @@ public class SituationMapFragment extends Fragment implements OnMapReadyCallback
 
         Drawable icon = ContextCompat.getDrawable(context, iconRes);
         if (icon != null) {
-            icon = icon.mutate();   // own copy: tinting must not affect the list's icons
-            // Dark icon on light fills (e.g. yellow), white icon on dark fills
-            boolean lightFill = ColorUtils.calculateLuminance(fill) > 0.5;
-            icon.setTint(lightFill ? Color.BLACK : Color.WHITE);
+            icon = icon.mutate();
+            double onWhite = ColorUtils.calculateContrast(Color.WHITE, fill);
+            double onBlack = ColorUtils.calculateContrast(Color.BLACK, fill);
+            icon.setTint(onBlack > onWhite ? Color.BLACK : Color.WHITE);
             int inset = Math.round(size * 0.22f);
             icon.setBounds(inset, inset, size - inset, size - inset);
             icon.draw(canvas);
