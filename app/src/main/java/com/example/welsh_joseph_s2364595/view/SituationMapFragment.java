@@ -174,10 +174,7 @@ public class SituationMapFragment extends Fragment implements OnMapReadyCallback
             }
             LatLng pinPosition = toLatLng(pin);
 
-            String title = getString(SituationStyle.labelFor(s));
-            if (!s.getRoadName().isEmpty()) {
-                title = title + " · " + s.getRoadName();
-            }
+            String title = SituationStyle.titleFor(requireContext(), s);
 
             Marker marker = map.addMarker(new MarkerOptions()
                     .position(pinPosition)

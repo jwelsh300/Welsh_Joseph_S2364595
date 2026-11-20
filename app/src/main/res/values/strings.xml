@@ -35,13 +35,25 @@
     <string name="summary_no_data">No data loaded</string>
     <string name="action_interval">Auto-refresh interval</string>
     <string name="interval_title">Refresh automatically</string>
-    <string name="summary_interval">every %1$d min</string>
 
     <string name="detail_placeholder">Select a situation to see details</string>
 
     <string name="detail_heading_location">Location</string>
     <string name="detail_heading_timing">Timing</string>
     <string name="detail_heading_impact">Impact</string>
+
+    <string name="detail_junction">Junction %1$s</string>
+    <string name="detail_crosses">Crosses %1$s</string>
+    <string name="detail_ref">Ref: %1$s</string>
+
+    <plurals name="detail_lanes_restricted">
+        <item quantity="one">%d lane restricted</item>
+        <item quantity="other">%d lanes restricted</item>
+    </plurals>
+    <plurals name="detail_lanes_open">
+        <item quantity="one">%d lane open</item>
+        <item quantity="other">%d lanes open</item>
+    </plurals>
 
     <string name="detail_label_direction">Direction</string>
     <string name="detail_label_from">From</string>

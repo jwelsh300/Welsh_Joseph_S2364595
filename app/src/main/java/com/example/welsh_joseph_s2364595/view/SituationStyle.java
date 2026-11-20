@@ -1,6 +1,7 @@
 package com.example.welsh_joseph_s2364595.view;
 
 import android.util.Log;
+import android.content.Context;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
@@ -43,6 +44,15 @@ public final class SituationStyle {
     @StringRes
     public static int labelFor(Situation s) {
         return LABELS[typeIndex(s)];
+    }
+
+    // "Roadworks · A84", "Road closed · M8": the same title in list, detail and map
+    public static String titleFor(Context context, Situation s) {
+        String title = context.getString(labelFor(s));
+        if (!s.getRoadName().isEmpty()) {
+            title = title + " · " + s.getRoadName();
+        }
+        return title;
     }
 
     @ColorRes

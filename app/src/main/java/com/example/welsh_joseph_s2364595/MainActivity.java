@@ -297,10 +297,13 @@ public class MainActivity extends AppCompatActivity
 
         Long time = viewModel.getLastUpdated().getValue();
         if (time != null) {
-            text = text + " · " + getString(R.string.summary_updated, formatTime(time))
-                    + " · " + getString(R.string.summary_interval, viewModel.getAutoRefreshMinutes());
+            text = text + " · " + getString(R.string.summary_updated, formatTime(time));
+            if (summaryText != null) {
+                String[] shortLabels = getResources().getStringArray(R.array.interval_short);
+                int index = indexOfMinutes((int) viewModel.getAutoRefreshMinutes());   // long → int
+                text = text + " · " + shortLabels[index];
+            }
         }
-
         showSummary(text);
     }
 
@@ -358,19 +361,25 @@ public class MainActivity extends AppCompatActivity
         return DateFormat.getTimeFormat(this).format(new Date(millis));
     }
 
+    private int indexOfMinutes(int minutes) {
+        int[] all = getResources().getIntArray(R.array.interval_minutes);
+        int fallback = 0;
+        for (int i = 0; i < all.length; i++) {
+            if (all[i] == minutes) {
+                return i;
+            }
+            if (all[i] == DEFAULT_REFRESH_MINUTES) {
+                fallback = i;
+            }
+        }
+        return fallback;
+    }
+
     private void showIntervalDialog() {
         String[] labels = getResources().getStringArray(R.array.interval_labels);
         int[] minutes = getResources().getIntArray(R.array.interval_minutes);
 
-        // Tick the option matching the current setting (-1 = none, if it somehow isn't listed)
-        int saved = loadRefreshMinutes();
-        int checked = -1;
-        for (int i = 0; i < minutes.length; i++) {
-            if (minutes[i] == saved) {
-                checked = i;
-                break;
-            }
-        }
+        int checked = indexOfMinutes(loadRefreshMinutes());
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.interval_title)

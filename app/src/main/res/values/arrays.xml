@@ -14,6 +14,13 @@
         <item>60</item>
     </integer-array>
 
+    <string-array name="interval_short">
+        <item>every minute</item>
+        <item>every 15 minutes</item>
+        <item>every 30 minutes</item>
+        <item>every hour</item>
+    </string-array>
+
     <string-array name="place_names">
         <item>Aberdeen</item>
         <item>Dundee</item>

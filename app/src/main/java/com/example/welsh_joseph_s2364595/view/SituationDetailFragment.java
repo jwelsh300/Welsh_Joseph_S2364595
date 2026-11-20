@@ -99,11 +99,7 @@ public class SituationDetailFragment extends Fragment {
         Context context = requireContext();
         detailCategory.setText(s.getCategory());
 
-        String title = getString(SituationStyle.labelFor(s));
-        if (!s.getRoadName().isEmpty()) {
-            title = title + " · " + s.getRoadName();
-        }
-        detailType.setText(title);
+        detailType.setText(SituationStyle.titleFor(context, s));
         detailIcon.setImageResource(SituationStyle.iconFor(s));
         detailIcon.setContentDescription(getString(SituationStyle.labelFor(s)));
 
@@ -143,7 +139,7 @@ public class SituationDetailFragment extends Fragment {
         String urgent = (isRoadwork && s.isUrgent()) ? getString(R.string.detail_urgent_yes) : "";
         setRow(rowUrgent, detailUrgent, urgent);
 
-        detailId.setText("Ref: " + s.getId());
+        detailId.setText(getString(R.string.detail_ref, s.getId()));
     }
 
     private void setRow(View row, TextView value, String text) {
@@ -162,10 +158,10 @@ public class SituationDetailFragment extends Fragment {
         addLine(sb, place);
 
         if (!p.getJunctionName().isEmpty()) {
-            addLine(sb, "Junction " + p.getJunctionName());
+            addLine(sb, getString(R.string.detail_junction, p.getJunctionName()));
         }
         if (!p.getSecondRoadName().isEmpty()) {
-            addLine(sb, "Crosses " + p.getSecondRoadName());
+            addLine(sb, getString(R.string.detail_crosses, p.getSecondRoadName()));
         }
         return sb.toString();
     }
@@ -182,15 +178,17 @@ public class SituationDetailFragment extends Fragment {
 
     private String describeLanes(Impact impact) {
         if (impact.isRoadClosed()) {
-            return "Road closed";
+            return getString(R.string.type_road_closed);
         }
         int restricted = impact.getLanesRestricted();
         if (restricted > 0) {
-            return restricted + (restricted == 1 ? " lane restricted" : " lanes restricted");
+            return getResources().getQuantityString(
+                    R.plurals.detail_lanes_restricted, restricted, restricted);
         }
         int open = impact.getOperationalLanes();
         if (open > 0) {
-            return open + (open == 1 ? " lane open" : " lanes open");
+            return getResources().getQuantityString(
+                    R.plurals.detail_lanes_open, open, open);
         }
         return "";
     }

@@ -72,7 +72,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                tools:text="M90/A90 - NB - Full Route - Hard shoulder short stops" />
+                tools:text="M90/A90 - NB - Full Route - Hard shoulder short stops"
+                android:textIsSelectable="true" />
 
             <!-- ===== Location  ===== -->
             <TextView
@@ -117,7 +118,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    tools:text="M90 (Slip Off to Rhs Crash Barrier)" />
+                    tools:text="M90 (Slip Off to Rhs Crash Barrier)"
+                    android:textIsSelectable="true" />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/rowTo"
@@ -135,7 +137,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    tools:text="M90 (Dalbeath O'Br to M90 S/B Off Slip To A92)" />
+                    tools:text="M90 (Dalbeath O'Br to M90 S/B Off Slip To A92)"
+                    android:textIsSelectable="true" />
             </LinearLayout>
 
             <!-- ===== Timing ===== -->
@@ -261,7 +264,8 @@
                 android:layout_marginTop="16dp"
                 android:textSize="12sp"
                 android:textColor="?android:attr/textColorSecondary"
-                tools:text="Ref: D_182962" />
+                tools:text="Ref: D_182962"
+                android:textIsSelectable="true" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -49,11 +49,7 @@ public class SituationAdapter extends RecyclerView.Adapter<SituationAdapter.View
         Situation s = situations.get(position);
         Context context = holder.itemView.getContext();
 
-        String title = s.getCategory();
-        if (!s.getRoadName().isEmpty()) {
-            title = title + " · " + s.getRoadName();
-        }
-        holder.rowTitle.setText(title);
+        holder.rowTitle.setText(SituationStyle.titleFor(context, s));
         holder.rowComment.setText(s.getComment());
 
         holder.rowIcon.setImageResource(SituationStyle.iconFor(s));
