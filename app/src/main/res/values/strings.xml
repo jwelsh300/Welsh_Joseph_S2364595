@@ -62,4 +62,8 @@
 
     <string name="filter_road">for %1$s</string>
     <string name="filter_nearby">within %1$d miles of %2$s</string>
+
+    <string name="action_show_map">Show map</string>
+    <string name="action_show_list">Show list</string>
+    <string name="map_tap_for_details">Tap for details</string>
 </resources>

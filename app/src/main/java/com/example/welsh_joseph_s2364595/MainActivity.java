@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     private TextView summaryText;
     private SituationViewModel viewModel;
     private ProgressBar loadingBar;
+    private MenuItem toggleItem;
 
     private static final String PREFS_NAME = "settings";
     private static final String KEY_REFRESH_MINUTES = "refresh_minutes";
@@ -104,10 +105,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.listHolder, new SituationMapFragment())   // TEMP M3: M4 adds the toggle
-                    .commit();
+            showListOrMap();
         } else {
             arrangeFragmentsAfterRotation();
         }
@@ -120,6 +118,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        toggleItem = menu.findItem(R.id.action_toggle_view);
+        updateToggleItem();
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 viewModel.setQuery("");
-                invalidateOptionsMenu();
+                invalidateOptionsMenu(); // fix for toolbar buttons vanishing after collapsing search
                 return true;
             }
         });
@@ -239,6 +240,10 @@ public class MainActivity extends AppCompatActivity
         }
         if (item.getItemId() == R.id.action_nearby) {
             showNearbyDialog();
+            return true;
+        }
+        if (item.getItemId() == R.id.action_toggle_view) {
+            toggleListOrMap();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -478,5 +483,33 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack(null)
                     .commit();
         }
+    }
+
+    private void toggleListOrMap() {
+        if (isDetailShowing()) {
+            getSupportFragmentManager().popBackStackImmediate();
+        }
+        viewModel.setMapShown(!viewModel.isMapShown());
+        showListOrMap();
+        updateToggleItem();
+    }
+
+    private void showListOrMap() {
+        Fragment screen = viewModel.isMapShown()
+                ? new SituationMapFragment()
+                : new SituationListFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.listHolder, screen)
+                .commit();
+    }
+
+    private void updateToggleItem() {
+        if (toggleItem == null) {
+            return;
+        }
+        boolean map = viewModel.isMapShown();
+        toggleItem.setIcon(map ? R.drawable.ic_list : R.drawable.ic_map);
+        toggleItem.setTitle(map ? R.string.action_show_list : R.string.action_show_map);
     }
 }

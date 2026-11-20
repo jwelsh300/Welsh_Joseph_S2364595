@@ -49,6 +49,7 @@ public class SituationViewModel extends ViewModel {
     private final MutableLiveData<NearbySetting> nearby = new MutableLiveData<>();
     private final AtomicBoolean busy = new AtomicBoolean(false);
     private static final double METERS_PER_MILE = 1609.344;
+    private boolean mapShown = false;
 
     public SituationViewModel() {
         filtered.addSource(situations, list -> applyFilter());
@@ -105,6 +106,14 @@ public class SituationViewModel extends ViewModel {
 
     public void clearNearby() {
         nearby.setValue(null);
+    }
+
+    public boolean isMapShown() {
+        return mapShown;
+    }
+
+    public void setMapShown(boolean shown) {
+        mapShown = shown;
     }
 
     public static final class NearbySetting {
