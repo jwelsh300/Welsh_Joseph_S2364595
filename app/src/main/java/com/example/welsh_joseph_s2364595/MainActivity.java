@@ -40,6 +40,7 @@ import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel.LoadStatus;
 import com.example.welsh_joseph_s2364595.viewmodel.SituationViewModel.NearbySetting;
 import com.example.welsh_joseph_s2364595.view.FilterText;
+import com.example.welsh_joseph_s2364595.view.SituationMapFragment;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.listHolder, new SituationListFragment())
+                    .replace(R.id.listHolder, new SituationMapFragment())   // TEMP M3: M4 adds the toggle
                     .commit();
         } else {
             arrangeFragmentsAfterRotation();
@@ -164,6 +165,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 viewModel.setQuery("");
+                invalidateOptionsMenu();
                 return true;
             }
         });
