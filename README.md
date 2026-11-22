@@ -13,6 +13,3 @@ Android app (Java/XML) showing Traffic Scotland incidents and roadworks with lis
 3. Sync Gradle and run on an emulator or device with Google Play (Android 8.0+).
 
 Without the keys the project still builds: the feed shows "Can't load traffic data" and the map is grey.
-
-## Prebuilt APK
-A debug-signed APK is attached to the v1.0 release.
